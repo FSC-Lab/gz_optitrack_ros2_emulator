@@ -18,9 +18,6 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 
 # --- change the version of the following based on the version of ROS and ubuntu --- #
 set(GZ_TRANSPORT_VERSION 13)
