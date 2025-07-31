@@ -3,14 +3,15 @@
 
 - Add to: ``/PX4_Autopilot/Tools/simulation/gz/models/MODEL_FOLDER/model.sdf``
 
+- Set the odometry plugin in the following format. (<model_name> is the name of the link)
 
 ```
 <model>
 …other stuff in sdf definition
     <!-- Observers -->
     <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
-      <linkName>SUBMODEL_NAME::LINK_NAME</linkName>
-      <odomTopic>odometry_groundtruth</odomTopic>
+      <odom_frame>SUBMODEL_NAME::LINK_NAME</odom_frame>
+      <odom_topic>model/<model_name>/groundtruth_odometry</odom_topic>
       <dimensions>3</dimensions>
       <odom_publish_frequency>100</odom_publish_frequency>  <!-- HZ -->
     </plugin>

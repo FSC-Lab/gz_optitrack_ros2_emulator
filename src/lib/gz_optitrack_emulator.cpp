@@ -34,7 +34,8 @@ void GazeboMocapEmulator::LoadParameters()
 void GazeboMocapEmulator::ConstructTopics()
 {
     for (const auto& s : modelList) {
-        topicPair.emplace_back("/model/" + s + "/odometry", "/mocap/" + s);
+        topicPair.emplace_back("/model/" + s + "/groundtruth_odometry",
+            "/mocap/" + s);
         RCLCPP_INFO(this->get_logger(),
             "subscribe to gz topic: %s. publish to ros topic: %s",
             topicPair.back().first.c_str(),
