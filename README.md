@@ -14,7 +14,7 @@ $ cd <path_to_workspace>/src
 
 $ git clone https://github.com/FSC-Lab/gz_optitrack_ros2_emulator.git
 ```
-### Step 3: Determine the gz-transport and gz-msg version
+### Step 2: Determine the gz-transport and gz-msg version
 ```
 $ dpkg -l | grep gz-transport
 
@@ -28,7 +28,7 @@ set(GZ_TRANSPORT_VERSION 13)
 set(GZ_MSG_VERSION 10)
 ```
 
-### Step 2: Build the node
+### Step 3: Build the node
 ```
 $ colcon build --packages-select gz_optitrack_ros2_emulator
 ```
@@ -38,13 +38,14 @@ $ colcon build --packages-select gz_optitrack_ros2_emulator
 source ~/path_to_workspace/<workspace_name>/install/local_setup.bash
 ```
 
-### Step 3: Set the model name
+### Step 4: Set the model name
 - The model names are listed in the ``config/params.yaml`` under the name of ``gz_model_list``. Read the following [instruction](docs/px4_sitl_groundtruth.md), make sure that the model name match the gz topic of the odometry plugin.
 - The convention of the package is to subscribe to the gz topic:
 ``model/<model_name>/groundtruth_odometry``
  and publish to the ros topic: ``/mocap/<model_name>``
+- IMPORTANT: everytime the parameter file is changed, you need to build the node so that the updated parameter file takes effect.
 
-### Step 4: Launch the node:
+### Step 5: Launch the node:
 
 ```
 $ ros2 launch gz_optitrack_ros2_emulator emulator_for_gazebo_launch.py
