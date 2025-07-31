@@ -1,10 +1,6 @@
 ## Add the ground-truth plugin in the gazebo model
-- To create an odometry publisher on a single link in a Gazebo model, in the sdf file of your PX4 SITL model
-
-- Add to: ``/PX4_Autopilot/Tools/simulation/gz/models/MODEL_FOLDER/model.sdf``
-
-- Set the odometry plugin in the following format. (<model_name> is the name of the link)
-
+- The gz model files are contained in the following directories: ``/PX4_Autopilot/Tools/simulation/gz/models/MODEL_FOLDER/model.sdf``
+- To create an odometry publisher on a link in a Gazebo model, in the sdf file of your PX4 SITL model, add the following field to the XML file:
 ```
 <model>
 …other stuff in sdf definition
@@ -19,3 +15,5 @@
 </model>
 </sdf>
 ```
+- The odom_frame field is the name of the link of which the odometry is published.
+- The odom_topic field is the gz topic. Set the odometry topic in the following format. (<model_name> is the name of the link). <model_name> must match the name listed in the params.yaml.

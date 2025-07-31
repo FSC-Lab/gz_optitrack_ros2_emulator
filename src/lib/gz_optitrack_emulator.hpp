@@ -66,24 +66,4 @@ private:
     std::map<std::string, MocapPub> publisherMap;
 };
 
-// using namespace Eigen;
-// class Mocap_emulator{
-//     public:
-//         Mocap_emulator(const std::string& pub_topic_name,
-//                        const std::string& sub_topic_name,
-//                        std::shared_ptr<rclcpp::Node> node,
-//                        size_t queue_size);
-//         ~Mocap_emulator();
-//     private:
-//         void PublishData();
-//         void SubscribeFromGazebo(const gz::msgs::Odometry& msg);
-//         rclcpp::Publisher<optitrack_broadcast::msg::Mocap>::SharedPtr pubmocap_;// publishing the recieved data
-//         rclcpp::Subscription<gz::msgs::Odometry>::SharedPtr      subgazebo_;// receiving
-//         optitrack_broadcast::msg::Mocap                             MessageMocap_;
-//         gz::msgs::Odometry                                    Drone_state_;
-//         Matrix3f R_IB;
-//         Vector4f quaternion;
-//         Vector3f omega_b;// angular velocity in body-fixed frame
-//         Vector3f omega_i;// angular velocity in inertial frame
-// };
 #endif
