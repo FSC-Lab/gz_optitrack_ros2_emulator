@@ -39,7 +39,7 @@ SOFTWARE.
 #include <gz/msgs/clock.pb.h>
 #include <gz/msgs/odometry.pb.h> // gz::msgs::Odometry
 
-#include "gz_optitrack_ros2_emulator/msg/mocap.hpp"
+#include <fsc_autopilot_ros2_msgs/msg/mocap.hpp>
 
 class GazeboMocapEmulator : public rclcpp::Node
 {
@@ -48,7 +48,7 @@ public:
     using ModeList = std::vector<std::string>;
     using TopicPair = std::pair<std::string, std::string>;
     // used to construct a publisher map
-    using MocapType = gz_optitrack_ros2_emulator::msg::Mocap;
+    using MocapType = fsc_autopilot_ros2_msgs::msg::Mocap;
     using MocapPub = rclcpp::Publisher<MocapType>::SharedPtr;
     using GzMsgType = gz::msgs::Odometry;
 private:

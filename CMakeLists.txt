@@ -29,6 +29,9 @@ find_package(gz-msgs${GZ_MSG_VERSION} REQUIRED)
 # System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
+# fsc custom message
+find_package(fsc_autopilot_ros2_msgs REQUIRED)
+
 set(_ob_deps
     ament_cmake
     rclcpp
@@ -37,21 +40,15 @@ set(_ob_deps
     tf2_ros
     tf2_eigen
     nav_msgs
+    fsc_autopilot_ros2_msgs
     gz-msgs${GZ_MSG_VERSION}
     rosidl_default_generators)
 
 # export
-ament_export_dependencies(ament_cmake rclcpp rosidl_default_runtime)
+# ament_export_dependencies(ament_cmake rclcpp rosidl_default_runtime)
 
 # export
 ament_export_dependencies(${_ob_deps})
-
-rosidl_generate_interfaces(${PROJECT_NAME} "msg/Mocap.msg" DEPENDENCIES
-                           geometry_msgs nav_msgs std_msgs)
-
-rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME}
-                              rosidl_typesupport_cpp)
-
 
 # include directory
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

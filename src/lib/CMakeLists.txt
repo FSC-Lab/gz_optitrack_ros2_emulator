@@ -16,4 +16,5 @@ ament_target_dependencies(${GZ_LIB_NAME}
   std_msgs
   geometry_msgs
   nav_msgs
+  fsc_autopilot_ros2_msgs
 )

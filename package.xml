@@ -15,13 +15,15 @@
   <depend>eigen3_cmake_module</depend>  
   <build_depend>libeigen3-dev</build_depend>  
 
+  <!-- include custom msgs -->
+  <depend>fsc_autopilot_ros2_msgs</depend>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
   <!-- To use launch files (best practise) -->
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-  <member_of_group>rosidl_interface_packages</member_of_group>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
