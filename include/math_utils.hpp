@@ -32,7 +32,7 @@ SOFTWARE.
 using namespace std;
 
 // quaternion to Euler angles
-Eigen::Vector3d quaternion_to_rpy2(const Eigen::Quaterniond &q)
+inline Eigen::Vector3d quaternion_to_rpy2(const Eigen::Quaterniond &q)
 {
     // YPR - ZYX
     return q.toRotationMatrix().eulerAngles(2, 1, 0).reverse();
@@ -53,7 +53,7 @@ Eigen::Quaterniond quaternion_from_rpy(const Eigen::Vector3d &rpy)
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 // q0 q1 q2 q3
 // w x y z
-Eigen::Vector3d quaternion_to_euler(const Eigen::Quaterniond &q)
+inline Eigen::Vector3d quaternion_to_euler(const Eigen::Quaterniond &q)
 {
     float quat[4];
     quat[0] = q.w();
@@ -68,7 +68,7 @@ Eigen::Vector3d quaternion_to_euler(const Eigen::Quaterniond &q)
     return ans;
 }
 
-Eigen::Vector3d quaternion_to_euler2(const Eigen::Vector4f& quat)
+inline Eigen::Vector3d quaternion_to_euler2(const Eigen::Vector4f& quat)
 {
     Eigen::Vector3d ans;
     ans[0] = atan2(2.0 * (quat[3] * quat[2] + quat[0] * quat[1]), 1.0 - 2.0 * (quat[1] * quat[1] + quat[2] * quat[2]));
@@ -78,7 +78,7 @@ Eigen::Vector3d quaternion_to_euler2(const Eigen::Vector4f& quat)
 }
 
 //rotation matrix to euler anlge
-void rotation_to_euler(const Eigen::Matrix3d& dcm, Eigen::Vector3d& euler_angle)
+inline void rotation_to_euler(const Eigen::Matrix3d& dcm, Eigen::Vector3d& euler_angle)
 {
     double phi_val = atan2(dcm(2, 1), dcm(2, 2));
     double theta_val = asin(-dcm(2, 0));
@@ -100,7 +100,7 @@ void rotation_to_euler(const Eigen::Matrix3d& dcm, Eigen::Vector3d& euler_angle)
 }
 
 //constrain_function
-float constrain_function(float data, float Max)
+inline float constrain_function(float data, float Max)
 {
     if(abs(data)>Max)
     {
@@ -114,7 +114,7 @@ float constrain_function(float data, float Max)
 
 
 //constrain_function2
-float constrain_function2(float data, float Min,float Max)
+inline float constrain_function2(float data, float Min,float Max)
 {
     if(data > Max)
     {
@@ -131,7 +131,7 @@ float constrain_function2(float data, float Min,float Max)
 
 // vector based constraint 
 
-Eigen::VectorXf constrain_vector(const Eigen::VectorXf& input, float Max_norm)
+inline Eigen::VectorXf constrain_vector(const Eigen::VectorXf& input, float Max_norm)
 {
     Eigen::VectorXf result;
 
@@ -165,7 +165,7 @@ Eigen::VectorXf constrain_vector(const Eigen::VectorXf& input, float Max_norm)
 // }
 
 // min function
-float min(float data1,float data2) {
+inline float min(float data1,float data2) {
     if(data1>=data2)
     {
         return data2;
@@ -176,14 +176,15 @@ float min(float data1,float data2) {
     }
 }
 
-Eigen::Vector3f Veemap(const Eigen::Matrix3f& cross_matrix) {
+inline Eigen::Vector3f Veemap(const Eigen::Matrix3f& cross_matrix) {
     Eigen::Vector3f vector;
     vector(0) = -cross_matrix(1,2);
     vector(1) = cross_matrix(0,2);
     vector(2) = -cross_matrix(0,1);
     return vector;
 }
-Eigen::Matrix3f Hatmap(const Eigen::Vector3f& vector) {
+
+inline Eigen::Matrix3f Hatmap(const Eigen::Vector3f& vector) {
     /*
 
     r^x = [0 -r3 r2;
@@ -204,7 +205,8 @@ Eigen::Matrix3f Hatmap(const Eigen::Vector3f& vector) {
     cross_matrix(2,2) = 0.0;
     return cross_matrix;
 }
-Eigen::Matrix3f QuaterionToRotationMatrix(const Eigen::Vector4f& quaternion) {
+
+inline Eigen::Matrix3f QuaterionToRotationMatrix(const Eigen::Vector4f& quaternion) {
     Eigen::Matrix3f R_IB;
 
     /* take a special note at the order of the quaterion

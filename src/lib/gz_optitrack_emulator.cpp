@@ -59,7 +59,7 @@ void GazeboMocapEmulator::ConstructTopics()
 {
     for (const auto& s : modelList) {
         topicPair.emplace_back("/model/" + s + "/groundtruth_odometry",
-            "/mocap/" + s);
+            "/" + s + "/mocap");
         RCLCPP_INFO(this->get_logger(),
             "subscribe to gz topic: %s. publish to ros topic: %s",
             topicPair.back().first.c_str(),
@@ -90,7 +90,8 @@ void GazeboMocapEmulator::SetupNode()
 void GazeboMocapEmulator::GzCallBack(const std::string &model, const GzMsgType &msg)
 {
     MocapType mocapMsg;
-    mocapMsg.header.stamp = this->now();
+    rclcpp::Clock sys_clock(RCL_SYSTEM_TIME);
+    mocapMsg.header.stamp = sys_clock.now(); //
     mocapMsg.header.frame_id = "map";
 
     mocapMsg.pose.position.x = msg.pose().position().x();
@@ -102,13 +103,45 @@ void GazeboMocapEmulator::GzCallBack(const std::string &model, const GzMsgType &
     mocapMsg.pose.orientation.z = msg.pose().orientation().z();
     mocapMsg.pose.orientation.w = msg.pose().orientation().w();
 
+    // After copying from Gazebo:
+    auto &o = mocapMsg.pose.orientation;
+    double n = std::sqrt(o.w*o.w + o.x*o.x + o.y*o.y + o.z*o.z);
+    if (n > 1e-12) { o.w/=n; o.x/=n; o.y/=n; o.z/=n; }
+    else { o.w = 1.0; o.x = o.y = o.z = 0.0; }  // guard against NaN
+    // Then build q (no second normalize needed)
+
     mocapMsg.twist.linear.x = msg.twist().linear().x();
     mocapMsg.twist.linear.y = msg.twist().linear().y();
     mocapMsg.twist.linear.z = msg.twist().linear().z();
 
-    mocapMsg.twist.angular.x = msg.twist().angular().x();
-    mocapMsg.twist.angular.y = msg.twist().angular().y();
-    mocapMsg.twist.angular.z = msg.twist().angular().z();
+    // gazebo angular velocity is measrued in ENU, we need to transform
+    // it to FLU (standard in our optitrack node)
+
+    Eigen::Quaterniond q_FLU_to_ENU(
+        mocapMsg.pose.orientation.w,
+        mocapMsg.pose.orientation.x,
+        mocapMsg.pose.orientation.y,
+        mocapMsg.pose.orientation.z);
+
+    // Normalize just in case (optional)
+    q_FLU_to_ENU.normalize();
+
+    // We need world->body (ENU->FLU)
+    const Eigen::Quaterniond q_ENU_to_FLU = q_FLU_to_ENU.conjugate();
+    const Eigen::Matrix3d   R_ENU_to_FLU  = q_ENU_to_FLU.toRotationMatrix();
+
+    Eigen::Vector3d w_enu(
+    msg.twist().angular().x(),
+    msg.twist().angular().y(),
+    msg.twist().angular().z());
+
+    // Rotate into body FLU
+    Eigen::Vector3d w_flu = R_ENU_to_FLU * w_enu;
+
+    // Write back to your Mocap message
+    mocapMsg.twist.angular.x = w_flu.x();
+    mocapMsg.twist.angular.y = w_flu.y();
+    mocapMsg.twist.angular.z = w_flu.z();    
 
     auto it = publisherMap.find(model);
     if (it != publisherMap.end()) {

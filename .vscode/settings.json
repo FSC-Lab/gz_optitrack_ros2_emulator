@@ -65,6 +65,7 @@
         "typeinfo": "cpp",
         "core": "cpp",
         "list": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "complex": "cpp"
     }
 }
