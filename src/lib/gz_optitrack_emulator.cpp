@@ -110,13 +110,6 @@ void GazeboMocapEmulator::GzCallBack(const std::string &model, const GzMsgType &
     else { o.w = 1.0; o.x = o.y = o.z = 0.0; }  // guard against NaN
     // Then build q (no second normalize needed)
 
-    mocapMsg.twist.linear.x = msg.twist().linear().x();
-    mocapMsg.twist.linear.y = msg.twist().linear().y();
-    mocapMsg.twist.linear.z = msg.twist().linear().z();
-
-    // gazebo angular velocity is measrued in ENU, we need to transform
-    // it to FLU (standard in our optitrack node)
-
     Eigen::Quaterniond q_FLU_to_ENU(
         mocapMsg.pose.orientation.w,
         mocapMsg.pose.orientation.x,
@@ -126,17 +119,22 @@ void GazeboMocapEmulator::GzCallBack(const std::string &model, const GzMsgType &
     // Normalize just in case (optional)
     q_FLU_to_ENU.normalize();
 
-    // We need world->body (ENU->FLU)
-    const Eigen::Quaterniond q_ENU_to_FLU = q_FLU_to_ENU.conjugate();
-    const Eigen::Matrix3d   R_ENU_to_FLU  = q_ENU_to_FLU.toRotationMatrix();
+    // Gazebo linear velocity is measured in FLU, we need to convert it to ENU
+    const Eigen::Vector3d v_flu(msg.twist().linear().x(),
+                                msg.twist().linear().y(),
+                                msg.twist().linear().z());
 
-    Eigen::Vector3d w_enu(
+    const Eigen::Vector3d v_enu = q_FLU_to_ENU * v_flu;
+
+    mocapMsg.twist.linear.x = v_enu.x();
+    mocapMsg.twist.linear.y = v_enu.y();
+    mocapMsg.twist.linear.z = v_enu.z();
+
+    // gazebo angular velocity is measrued in FLU already
+    Eigen::Vector3d w_flu(
     msg.twist().angular().x(),
     msg.twist().angular().y(),
     msg.twist().angular().z());
-
-    // Rotate into body FLU
-    Eigen::Vector3d w_flu = R_ENU_to_FLU * w_enu;
 
     // Write back to your Mocap message
     mocapMsg.twist.angular.x = w_flu.x();
